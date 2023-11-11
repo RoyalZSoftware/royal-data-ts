@@ -1,0 +1,17 @@
+{
+  "name": "@royalzsoftware/royal-data-ts",
+  "version": "0.1.0",
+  "description": "🌟 Define your models and this package handle will handle the persistence",
+  "main": "index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "npm run build && node dist/example.js"
+  },
+  "keywords": [],
+  "author": "Alexander Panov",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.2.2"
+  }
+}
