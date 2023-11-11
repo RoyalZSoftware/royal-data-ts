@@ -1,15 +1,19 @@
 {
   "name": "@royalzsoftware/royal-data-ts",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "🌟 Define your models and this package handle will handle the persistence",
   "main": "index.js",
   "types": "dist/index.d.ts",
+  "files": ["dist/"],
+  "repository": {
+    "url": "https://github.com/royalzsoftware/royal-data-ts"
+  },
   "scripts": {
     "build": "tsc",
     "test": "npm run build && node dist/example.js",
     "example": "npm run build && node dist/example.js"
   },
-  "keywords": [],
+  "keywords": ["repository", "crud", "http"],
   "author": "Alexander Panov",
   "license": "MIT",
   "devDependencies": {
