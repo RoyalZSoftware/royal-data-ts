@@ -6,7 +6,7 @@ import { PersistedModel } from "./model-base";
 import { Id } from "./id";
 import { UpdateRepositoryOperation } from "./repository-operations/update-repository-operation";
 
-export abstract class CrudRepository<ModelType, FilterType> implements CreateRepositoryOperation<ModelType>, GetAllRepositoryOperation<ModelType, FilterType>, GetDetailsRepositoryOperation<ModelType>, UpdateRepositoryOperation<ModelType>, DeleteRepositoryOperation<ModelType> {
+export abstract class CrudRepository<ModelType, FilterType = {}> implements CreateRepositoryOperation<ModelType>, GetAllRepositoryOperation<ModelType, FilterType>, GetDetailsRepositoryOperation<ModelType>, UpdateRepositoryOperation<ModelType>, DeleteRepositoryOperation<ModelType> {
     abstract create(model: ModelType): Promise<PersistedModel<ModelType>> 
     abstract getAll(filter: Partial<FilterType>): Promise<PersistedModel<ModelType>[]> 
     abstract getDetailsFor(id: Id<ModelType>): Promise<PersistedModel<ModelType> | undefined> 

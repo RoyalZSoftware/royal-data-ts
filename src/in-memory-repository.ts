@@ -19,7 +19,7 @@ export class InMemoryStorageAdapter implements StorageAdapter {
     }
 }
 
-export abstract class InMemoryCrudRepository<ModelType, FilterType> extends CrudRepository<ModelType, FilterType> {
+export abstract class InMemoryCrudRepository<ModelType, FilterType = {}> extends CrudRepository<ModelType, FilterType> {
     
     protected _items: PersistedModel<ModelType>[] = [];
     

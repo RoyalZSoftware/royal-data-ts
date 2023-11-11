@@ -18,12 +18,12 @@ class User {
 }
 
 // 1. create the user repository (since it supports more than just CRUD endpoints)
-interface UserRepository extends CrudRepository<User, {}> {
+interface UserRepository extends CrudRepository<User> {
     me(): Promise<PersistedModel<User>>;
 }
 
 // 2. create the in memory implementation for further operations
-class InMemoryUserRepository extends InMemoryCrudRepository<User, {}> implements UserRepository {
+class InMemoryUserRepository extends InMemoryCrudRepository<User> implements UserRepository {
     me(): Promise<PersistedModel<User>> {
         return Promise.resolve<PersistedModel<User>>(this._items[0]!);
     }
