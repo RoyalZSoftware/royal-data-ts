@@ -1,6 +1,7 @@
 # Royal Data TS
+🚀 Define your models and this package will handle the persistence 
 
-🚀 This package is a simple library using the power of repositories to unify data access to several different sources.
+This package is a simple library using the power of repositories to unify data access to several different sources.
 
 ## Run the example in 4.738 seconds from now
 ```sh
