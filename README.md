@@ -1,6 +1,6 @@
-# RoyalData for Typescript
+# Royal Data TS
 
-This package is a simple library using the power of repositories to unify data access to several different sources.
+🚀 This package is a simple library using the power of repositories to unify data access to several different sources.
 
 ## Example
 ```typescript
