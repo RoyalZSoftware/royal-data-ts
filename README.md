@@ -2,6 +2,11 @@
 
 🚀 This package is a simple library using the power of repositories to unify data access to several different sources.
 
+## Running the example
+```sh
+$ cd /tmp && git clone https://github.com/royalzsoftware/royal-data-ts && cd royal-data-ts && npm install && npm run example
+```
+
 ## Example
 ```typescript
 import { CrudRepository } from "./crud-repository";
@@ -70,7 +75,3 @@ test(userRepository);
 - Clear defined interfaces with low risk of wrong usage
 - Ships with highly extensible `HTTP Repository`
 
-## Running the example
-```
-$ cd /tmp && git clone https://github.com/royalzsoftware/royal-data-ts && npm install && npm run test
-```

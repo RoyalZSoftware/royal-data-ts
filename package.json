@@ -6,7 +6,8 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "test": "npm run build && node dist/example.js"
+    "test": "npm run build && node dist/example.js",
+    "example": "npm run build && node dist/example.js"
   },
   "keywords": [],
   "author": "Alexander Panov",
