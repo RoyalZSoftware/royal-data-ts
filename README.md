@@ -76,3 +76,10 @@ test(userRepository);
 - Clear defined interfaces with low risk of wrong usage
 - Ships with highly extensible `HTTP Repository`
 
+## Releasing a new version
+### Prerequisites
+- Please do not have neither staged, nor unstaged changes, these will break the flow.
+- You need to have make installed.
+## Doing
+- Rename the `UNRELEASED` section in the `CHANGELOG.md` file to following `DATE - SEMANTICVERSION` for example `2023-11-12 - 0.1.3`
+- Then run `make`

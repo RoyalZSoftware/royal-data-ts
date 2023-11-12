@@ -1,5 +1,7 @@
 ## Changelog
 
+## Unreleased
+
 ## 2023-11-12 - 0.1.4
 ### Fixes
 - Separating the `HttpRepository<ModelType>` into several `HttpOperations`
