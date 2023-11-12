@@ -1,4 +1,8 @@
-## Changelog
+# Changelog
+
+## UNRELEASED
+### Chores
+- README.md add installation instructions
 
 ## 2023-11-12 - 0.1.5
 ### Fixes

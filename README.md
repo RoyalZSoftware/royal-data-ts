@@ -8,6 +8,17 @@ This package is a simple library using the power of repositories to unify data a
 $ cd /tmp && git clone https://github.com/royalzsoftware/royal-data-ts && cd royal-data-ts && npm install && npm run example
 ```
 
+## Installation
+#### npm
+```bash
+$ npm i @royalzsoftware/royal-data-ts
+```
+
+#### yarn
+```bash
+$ yarn add @royalzsoftware/royal-data-ts
+```
+
 ## Example
 ```typescript
 import { CrudRepository } from "./crud-repository";
