@@ -1,5 +1,9 @@
 ## Changelog
 
+## 2023-11-12 - 0.1.3
+## Fixes
+- ship local storage adapter for the `InMemoryRepository`
+
 ## 2023-11-12 - 0.1.2
 ### Chores
 - update package.json
