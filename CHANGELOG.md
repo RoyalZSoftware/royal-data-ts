@@ -1,7 +1,11 @@
 ## Changelog
 
+## 2023-11-12 - 0.1.4
+### Fixes
+- Separating the `HttpRepository<ModelType>` into several `HttpOperations`
+
 ## 2023-11-12 - 0.1.3
-## Fixes
+### Fixes
 - ship local storage adapter for the `InMemoryRepository`
 
 ## 2023-11-12 - 0.1.2
