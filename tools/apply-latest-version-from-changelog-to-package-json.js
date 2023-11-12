@@ -27,11 +27,14 @@ const latestVesion = findLatestVersionFromChangelog(changelogContent);
 
 const packageJson = readPackageJson();
 
-if (latestVesion == packageJson.version) return console.info("Nothing to do");
+if (latestVesion == packageJson.version) {
+    console.info("Nothing to do");
+    return process.exit(1);
+}
 
 console.log("Updating version in package.json from " + packageJson.version + " to " + latestVesion);
 
 packageJson.version = latestVesion;
 
 savePackageJson(packageJson);
-return 0;
+return process.exit(0);
