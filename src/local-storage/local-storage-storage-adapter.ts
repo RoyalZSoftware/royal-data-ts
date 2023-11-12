@@ -10,7 +10,8 @@ export class LocalStorageStorageAdapter implements StorageAdapter {
         return Promise.resolve<boolean>(true);
     }
     getItems<T>(): Promise<PersistedModel<T>[]> {
-        throw new Error("Method not implemented.");
+        const stringFromLocalStorage = localStorage.getItem(this._key);
+        return stringFromLocalStorage === null ? [] : JSON.parse(stringFromLocalStorage);
     }
 
 }

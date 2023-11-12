@@ -1,6 +1,8 @@
 ## Changelog
 
 ## Unreleased
+### Fixes
+- implement `getItems` for the `LocalStorageStorageAdapter`
 
 ## 2023-11-12 - 0.1.4
 ### Fixes
