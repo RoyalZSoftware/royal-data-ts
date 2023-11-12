@@ -5,7 +5,9 @@
   "main": "index.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist/"
+    "dist/",
+    "CHANGELOG.md",
+    "README.md"
   ],
   "repository": {
     "url": "https://github.com/royalzsoftware/royal-data-ts"
