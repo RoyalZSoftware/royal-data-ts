@@ -4,3 +4,4 @@ export * from './http'
 export * from './crud-repository';
 export * from './repository-operations';
 export * from './in-memory-repository';
+export * from './local-storage';
