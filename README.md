@@ -21,9 +21,9 @@ $ yarn add @royalzsoftware/royal-data-ts
 
 ## Example
 ```typescript
+import { firstValueFrom } from "rxjs";
 import { CrudRepository } from "./crud-repository";
-import { InMemoryCrudRepository, InMemoryStorageAdapter } from "./in-memory-repository";
-import { PersistedModel } from "./model-base";
+import { CrudRepositoryBuilder } from "./crud-repository-builder";
 
 // 0. create the user domain object
 class User {
@@ -40,40 +40,35 @@ class User {
     }
 }
 
-// 1. create the user repository (since it supports more than just CRUD endpoints)
-interface UserRepository extends CrudRepository<User, {}> {
-    me(): Observable<PersistedModel<User>>;
-}
-
-// 2. create the in memory implementation for further operations
-class InMemoryUserRepository extends InMemoryCrudRepository<User, {}> implements UserRepository {
-    me(): Observable<PersistedModel<User>> {
-        return Promise.resolve<PersistedModel<User>>(this._items[0]!);
-    }
-}
-
-// 3. inject the userRepository
-async function test(userRepository: UserRepository) {
-    // 4. create the user
+// 1. inject the userRepository
+async function test(userRepository: CrudRepository<User>) {
+    // 2. create the user
     const user = new User("Alexander", "Panov");
 
-    // 5. store the current user and retrieve newly created id
-    const {id: userId} = await userRepository.create(user);
+    // 3. store the current user and retrieve newly created id
+    const {id: userId} = await firstValueFrom(userRepository.create(user));
 
-    // 6. add permission to the user
+    // 4. add permission to the user
     user.addPermission('admin');
 
-    // 7. update the user with the previously retrieved id and the user data
-    const {model: updatedUser} = await userRepository.update(userId, user);
+    // 5. update the user with the previously retrieved id and the user data
+    const {model: updatedUser} = await firstValueFrom(userRepository.update(userId, user));
 
-    // 8. print out if the admin is an admin user
+    // 6. print out if the admin is an admin user
     console.log(updatedUser.isAdminUser());
 }
 
-// 9. instanciate repository
-const userRepository = new InMemoryUserRepository(
-    new InMemoryStorageAdapter()
-);
+const repoBuilder = new CrudRepositoryBuilder<User>();
+
+// 7. instantiate in memory repository
+const userRepository = repoBuilder.inMemory();
+
+// 8. or inject the http repository, by providing a http client.
+const httpClient = undefined as any // YOUR JOB
+
+const httpUserRepository = repoBuilder.http(httpClient, (userData: any) => {
+    return new User(userData.username, userData.password);
+}).withDefaultRouteDefinitions('/users');
 
 // 9. run this shit
 test(userRepository);
