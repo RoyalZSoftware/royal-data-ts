@@ -85,7 +85,7 @@ describe("InMemoryCrudRepository tests", () => {
 
         testCase.repository.update(id, model);
 
-        expect(await (await testCase.first()).model.title).toEqual("Blog post 1000");
+        expect((await testCase.first()).model.title).toEqual("Blog post 1000");
     });
 
     it("Deleting a model works", async () => {
@@ -95,10 +95,10 @@ describe("InMemoryCrudRepository tests", () => {
         
         const {id, model} = await testCase.first();
 
-        expect(await (await firstValueFrom(testCase.repository.getAll({}))).length).toEqual(1);
+        expect((await firstValueFrom(testCase.repository.getAll({}))).length).toEqual(1);
 
         testCase.repository.delete(id);
 
-        expect(await (await firstValueFrom(testCase.repository.getAll({}))).length).toEqual(0);
+        expect((await firstValueFrom(testCase.repository.getAll({}))).length).toEqual(0);
     })
 })
