@@ -68,7 +68,7 @@ describe("InMemoryCrudRepository tests", () => {
         
         const {id, model} = await testCase.first();
 
-        expect(await (await firstValueFrom(testCase.repository.getDetailsFor(id)))?.model.title).toEqual("Blog post 0");
+        expect((await firstValueFrom(testCase.repository.getDetailsFor(id)))?.model.title).toEqual("Blog post 0");
     })
 
 

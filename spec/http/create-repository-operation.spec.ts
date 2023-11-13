@@ -53,8 +53,8 @@ describe("CreateRepositoryOperation Tests", () => {
             )
             .withDefaultRouteDefinitions('posts').build();
 
-        await firstValueFrom(repository.getDetailsFor(new Id<BlogPost>("0")))
+        const details = await firstValueFrom(repository.getDetailsFor(new Id<BlogPost>("0")))
 
-        console.log(spy.sendSpy)
+        expect(details!.model.authorId.value).toEqual("0")
     });
 });

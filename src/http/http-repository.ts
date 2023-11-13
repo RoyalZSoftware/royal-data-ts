@@ -123,7 +123,7 @@ export class JsonSerializationAdapter<ModelType, FilterType> {
                 throw new Error("Expected every model to have an id");
             }
 
-            return new PersistedModel(new Id<ModelType>(model.id), model);
+            return new PersistedModel(new Id<ModelType>(model.id), this._buildInstance(model));
         })
     }
 }
