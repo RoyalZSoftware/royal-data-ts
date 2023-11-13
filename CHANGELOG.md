@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+### Chores
+- Remove console log statements
+
 ## 2023-11-13 - 0.1.6
 ### Chores
 - README.md add installation instructions

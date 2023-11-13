@@ -43,7 +43,6 @@ export abstract class InMemoryCrudRepository<ModelType, FilterType = {}> extends
     }
 
     update(id: Id<ModelType>, payload: ModelType): Promise<PersistedModel<ModelType>> {
-        console.log(this._items);
         const itemIndex = this._items.findIndex(c => c.id.value == id.value);
         
         if (itemIndex === -1) throw new Error('Not found.');
@@ -62,7 +61,6 @@ export abstract class InMemoryCrudRepository<ModelType, FilterType = {}> extends
     }
 
     getAll(filter: Partial<FilterType>): Promise<PersistedModel<ModelType>[]> {
-        console.log("hallow lt", this._items);
         return Promise.resolve(this._items);
     }
 
