@@ -40,7 +40,7 @@ export class HttpGetAllRepositoryOperation<ModelType extends {}, FilterType = {}
 
     getAll(filter: Partial<FilterType>): Observable<PersistedModel<ModelType>[]> {
         // TODO support filter
-        
+
         return this._httpClient.send(this._endpoint, 'GET').pipe(
             map(({ body }) => {
                 const models: PersistedModel<ModelType>[] = this._deserializeResponse(body);
@@ -90,25 +90,29 @@ export class HttpDeleteRepositoryOperation<ModelType extends {}> implements Dele
 
 export class JsonSerializationAdapter<ModelType, FilterType> {
 
-    public deserializeStringToPersistedModel: SerializeFn<string, PersistedModel<ModelType>> = (input: string) => {
+    constructor(private _buildInstance: (data: any) => ModelType) { }
+
+    public deserializeStringToPersistedModel(input: string): PersistedModel<ModelType> {
         const data = JSON.parse(input);
 
         if (!("id" in data)) {
-            throw new Error("Could not deserialize ")
+            throw new Error("Could not deserialize");
         }
 
-        return new PersistedModel(new Id<ModelType>(data.id), data);
+        const instance = this._buildInstance(data);
+
+        return new PersistedModel(new Id<ModelType>(data.id), instance);
     }
 
-    public serializeModelToString: SerializeFn<ModelType, string> = (input: ModelType) => {
+    public serializeModelToString(input: ModelType) {
         return JSON.stringify(input);
     }
 
-    public serializeFilterToString: SerializeFn<FilterType, string> = (input: FilterType) => {
+    public serializeFilterToString(input: FilterType) {
         return ""; // TODO
     }
-    
-    public deserializeArrayStringToPersistedModelArray: SerializeFn<string, PersistedModel<ModelType>[]> = (input: string) => {
+
+    public deserializeArrayStringToPersistedModelArray(input: string) {
         const data = JSON.parse(input);
 
         if (!Array.isArray(data))
@@ -124,6 +128,14 @@ export class JsonSerializationAdapter<ModelType, FilterType> {
     }
 }
 
+export type HttpRepositoryRouteDefinitions<ModelType> = {
+    create: string;
+    getAll: string;
+    getDetailsFor: RouteFnWithModelId<ModelType>;
+    update: RouteFnWithModelId<ModelType>;
+    delete: RouteFnWithModelId<ModelType>;
+};
+
 export class HttpRepository<ModelType extends {}, FilterType = {}> implements CrudRepository<ModelType, FilterType> {
 
     protected _createOperation: HttpCreateRepositoryOperation<ModelType>;
@@ -134,20 +146,25 @@ export class HttpRepository<ModelType extends {}, FilterType = {}> implements Cr
 
     constructor(
         protected _httpClient: HttpClient,
-        protected _routeDefinitions: {
-            create: string,
-            getAll: string,
-            getDetailsFor: RouteFnWithModelId<ModelType>,
-            update: RouteFnWithModelId<ModelType>,
-            delete: RouteFnWithModelId<ModelType>,
-        },
-        protected _serializationAdapter: any = JsonSerializationAdapter<ModelType, FilterType>,
+        protected _routeDefinitions: HttpRepositoryRouteDefinitions<ModelType>,
+        protected _serializationAdapter: JsonSerializationAdapter<ModelType, FilterType>,
     ) {
-        this._createOperation = new HttpCreateRepositoryOperation<ModelType>(_httpClient, _routeDefinitions.create, this._serializationAdapter.serializeModelToString, this._serializationAdapter.deserializeStringToPersistedModel);
-        this._getAllOperation = new HttpGetAllRepositoryOperation<ModelType, FilterType>(_httpClient, _routeDefinitions.getAll, this._serializationAdapter.serializeFilterToString, this._serializationAdapter.deserializeArrayStringToPersistedModelArray);
-        this._getDetailsForOperation = new HttpGetDetailsForRepositoryOperation<ModelType>(_httpClient, _routeDefinitions.getDetailsFor, this._serializationAdapter.deserializeStringToPersistedModel);
-        this._updateOperation = new HttpUpdateRepositoryOperation<ModelType>(_httpClient, _routeDefinitions.update, this._serializationAdapter.serializeModelToString, this._serializationAdapter.deserializeStringToPersistedModel);
-        this._deleteOperation = new HttpDeleteRepositoryOperation<ModelType>(_httpClient, _routeDefinitions.delete);
+        this._createOperation = new HttpCreateRepositoryOperation<ModelType>(_httpClient,
+            _routeDefinitions.create,
+            (i) => this._serializationAdapter.serializeModelToString(i),
+            (i) => this._serializationAdapter.deserializeStringToPersistedModel(i));
+        this._getAllOperation = new HttpGetAllRepositoryOperation<ModelType, FilterType>(_httpClient, _routeDefinitions.getAll,
+            (i) => this._serializationAdapter.serializeFilterToString(i),
+            (i) => this._serializationAdapter.deserializeArrayStringToPersistedModelArray(i));
+        this._getDetailsForOperation = new HttpGetDetailsForRepositoryOperation<ModelType>(_httpClient,
+            (i) => _routeDefinitions.getDetailsFor(i),
+            (i) => this._serializationAdapter.deserializeStringToPersistedModel(i));
+        this._updateOperation = new HttpUpdateRepositoryOperation<ModelType>(_httpClient,
+            _routeDefinitions.update,
+            (i) => this._serializationAdapter.serializeModelToString(i),
+            (i) => this._serializationAdapter.deserializeStringToPersistedModel(i));
+        this._deleteOperation = new HttpDeleteRepositoryOperation<ModelType>(_httpClient,
+            (i) => _routeDefinitions.delete(i));
     }
     create(model: ModelType): Observable<PersistedModel<ModelType>> {
         return this._createOperation.create(model);
