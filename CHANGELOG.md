@@ -1,6 +1,8 @@
 # Changelog
 
 ## Unreleased
+
+## 2023-11-13 - 0.1.7
 ### Chores
 - Remove console log statements
 
