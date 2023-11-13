@@ -1,6 +1,6 @@
 # Changelog
 
-## UNRELEASED
+## 2023-11-13 - 0.1.6
 ### Chores
 - README.md add installation instructions
 - downgrade dev typescript version to 4.9.5
