@@ -5,11 +5,12 @@ import { GetDetailsRepositoryOperation } from "./repository-operations/get-detai
 import { PersistedModel } from "./model-base";
 import { Id } from "./id";
 import { UpdateRepositoryOperation } from "./repository-operations/update-repository-operation";
+import { Observable } from "rxjs";
 
-export abstract class CrudRepository<ModelType, FilterType = {}> implements CreateRepositoryOperation<ModelType>, GetAllRepositoryOperation<ModelType, FilterType>, GetDetailsRepositoryOperation<ModelType>, UpdateRepositoryOperation<ModelType>, DeleteRepositoryOperation<ModelType> {
-    abstract create(model: ModelType): Promise<PersistedModel<ModelType>> 
-    abstract getAll(filter: Partial<FilterType>): Promise<PersistedModel<ModelType>[]> 
-    abstract getDetailsFor(id: Id<ModelType>): Promise<PersistedModel<ModelType> | undefined> 
-    abstract update(id: Id<ModelType>, updatePayload: ModelType): Promise<PersistedModel<ModelType>>
-    abstract delete(id: Id<ModelType>): Promise<boolean>
+export interface CrudRepository<ModelType, FilterType = {}> extends CreateRepositoryOperation<ModelType>, GetAllRepositoryOperation<ModelType, FilterType>, GetDetailsRepositoryOperation<ModelType>, UpdateRepositoryOperation<ModelType>, DeleteRepositoryOperation<ModelType> {
+    create(model: ModelType): Observable<PersistedModel<ModelType>> 
+    getAll(filter: Partial<FilterType>): Observable<PersistedModel<ModelType>[]> 
+    getDetailsFor(id: Id<ModelType>): Observable<PersistedModel<ModelType> | undefined> 
+    update(id: Id<ModelType>, updatePayload: ModelType): Observable<PersistedModel<ModelType>>
+    delete(id: Id<ModelType>): Observable<boolean>
 }

@@ -1,51 +1,42 @@
+import { Observable, of } from "rxjs";
 import { CrudRepository } from "./crud-repository";
 import { Id } from "./id";
 import { PersistedModel } from "./model-base";
 
 export interface StorageAdapter {
-    setItems<T>(value: T[]): Promise<boolean>;
-    getItems<T>(): Promise<PersistedModel<T>[]>;
+    setItems<T>(value: T[]): Observable<boolean>;
+    getItems<T>(): Observable<PersistedModel<T>[]>;
 }
 
 export class InMemoryStorageAdapter implements StorageAdapter {
     public items: any[] = [];
 
-    setItems<T>(value: T[]): Promise<boolean> {
+    setItems<T>(value: T[]): Observable<boolean> {
         this.items = value;
-        return Promise.resolve<boolean>(true);
+        return of<boolean>(true);
     }
-    getItems<T>(): Promise<PersistedModel<T>[]> {
-        return Promise.resolve(this.items);
+    getItems<T>(): Observable<PersistedModel<T>[]> {
+        return of(this.items);
     }
 }
 
-export class InMemoryCrudRepository<ModelType, FilterType = {}> extends CrudRepository<ModelType, FilterType> {
+export class InMemoryCrudRepository<ModelType, FilterType = {}> implements CrudRepository<ModelType, FilterType> {
     
     protected _items: PersistedModel<ModelType>[] = [];
     private _initialized: boolean = false;
     
-    constructor(protected _storageAdapter: StorageAdapter) {
-        super();
-        this.loadFromStorageAdapter().then();
-    }
+    constructor(protected _storageAdapter: StorageAdapter) { }
 
-    async loadFromStorageAdapter(): Promise<void> {
-        return this._storageAdapter.getItems<ModelType>().then((result) => {
-            this._items = result;
-            this._initialized = true;
-        });
-    }
-
-    create(model: ModelType): Promise<PersistedModel<ModelType>> {
+    create(model: ModelType): Observable<PersistedModel<ModelType>> {
         const createdItem = new PersistedModel(new Id<ModelType>(this._items.length.toString()), model);
         this._items.push(createdItem);
 
         this._storageAdapter.setItems(this._items);
 
-        return Promise.resolve(createdItem);
+        return of(createdItem);
     }
 
-    update(id: Id<ModelType>, payload: ModelType): Promise<PersistedModel<ModelType>> {
+    update(id: Id<ModelType>, payload: ModelType): Observable<PersistedModel<ModelType>> {
         const itemIndex = this._items.findIndex(c => c.id.value == id.value);
         
         if (itemIndex === -1) throw new Error('Not found.');
@@ -54,29 +45,23 @@ export class InMemoryCrudRepository<ModelType, FilterType = {}> extends CrudRepo
         this._items[itemIndex] = updatedItem;
         this._storageAdapter.setItems(this._items);
 
-        return Promise.resolve(updatedItem);
+        return of(updatedItem);
     }
 
-    async getDetailsFor(id: Id<ModelType>): Promise<PersistedModel<ModelType> | undefined> {
-        if (!this._initialized) {
-            await this.loadFromStorageAdapter();
-        }
+    getDetailsFor(id: Id<ModelType>): Observable<PersistedModel<ModelType> | undefined> {
         const item = this._items.find(c => c.id.value == id.value);
 
-        return Promise.resolve(item);
+        return of(item);
     }
 
-    async getAll(filter: Partial<FilterType>): Promise<PersistedModel<ModelType>[]> {
-        if (!this._initialized) {
-            await this.loadFromStorageAdapter();
-        }
-        return Promise.resolve(this._items);
+    getAll(filter: Partial<FilterType>): Observable<PersistedModel<ModelType>[]> {
+        return of(this._items);
     }
 
-    delete(id: Id<ModelType>): Promise<boolean> {
+    delete(id: Id<ModelType>): Observable<boolean> {
         const deletedItems = this._items.splice(this._items.findIndex(c => c.id.value === id.value), 1);
 
         this._storageAdapter.setItems(this._items);
-        return Promise.resolve(deletedItems.length === 1);
+        return of(deletedItems.length === 1);
     }
 }

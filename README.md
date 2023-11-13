@@ -42,12 +42,12 @@ class User {
 
 // 1. create the user repository (since it supports more than just CRUD endpoints)
 interface UserRepository extends CrudRepository<User, {}> {
-    me(): Promise<PersistedModel<User>>;
+    me(): Observable<PersistedModel<User>>;
 }
 
 // 2. create the in memory implementation for further operations
 class InMemoryUserRepository extends InMemoryCrudRepository<User, {}> implements UserRepository {
-    me(): Promise<PersistedModel<User>> {
+    me(): Observable<PersistedModel<User>> {
         return Promise.resolve<PersistedModel<User>>(this._items[0]!);
     }
 }
@@ -80,7 +80,7 @@ test(userRepository);
 ```
 
 ## 🌟 Highlights
-- Promise based
+- RxJs first
 - Zero dependencies besides Typescript
 - Small modules that can be extended easily
 - Shipped with `LocalStorage` adapter, for UI development without external depedencies

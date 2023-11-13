@@ -1,3 +1,4 @@
+import { firstValueFrom, Observable, of } from "rxjs";
 import { CrudRepository } from "./crud-repository";
 import { InMemoryCrudRepository, InMemoryStorageAdapter } from "./in-memory-repository";
 import { PersistedModel } from "./model-base";
@@ -19,13 +20,13 @@ class User {
 
 // 1. create the user repository (since it supports more than just CRUD endpoints)
 interface UserRepository extends CrudRepository<User> {
-    me(): Promise<PersistedModel<User>>;
+    me(): Observable<PersistedModel<User>>;
 }
 
 // 2. create the in memory implementation for further operations
 class InMemoryUserRepository extends InMemoryCrudRepository<User> implements UserRepository {
-    me(): Promise<PersistedModel<User>> {
-        return Promise.resolve<PersistedModel<User>>(this._items[0]!);
+    me(): Observable<PersistedModel<User>> {
+        return of(this._items[0]!);
     }
 }
 
@@ -35,13 +36,13 @@ async function test(userRepository: UserRepository) {
     const user = new User("Alexander", "Panov");
 
     // 5. store the current user and retrieve newly created id
-    const {id: userId} = await userRepository.create(user);
+    const {id: userId} = await firstValueFrom(userRepository.create(user));
 
     // 6. add permission to the user
     user.addPermission('admin');
 
     // 7. update the user with the previously retrieved id and the user data
-    const {model: updatedUser} = await userRepository.update(userId, user);
+    const {model: updatedUser} = await firstValueFrom(userRepository.update(userId, user));
 
     // 8. print out if the admin is an admin user
     console.log(updatedUser.isAdminUser());

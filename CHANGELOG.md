@@ -1,6 +1,12 @@
 # Changelog
 
 ## Unreleased
+### Breaking changes
+- Getting rid of `Promises` and change to `RxJs`
+### Features
+- serialization for HttpRepository
+### Chores
+- make `CrudRepository` an interface, instead of an abstract class
 
 ## 2023-11-13 - 0.1.10
 ### Fixes
