@@ -1,6 +1,8 @@
 # Changelog
 
 ## Unreleased
+
+## 2023-11-13 - 0.2.0
 ### Breaking changes
 - Getting rid of `Promises` and change to `RxJs`
 ### Features
