@@ -22,14 +22,17 @@ export class InMemoryStorageAdapter implements StorageAdapter {
 export abstract class InMemoryCrudRepository<ModelType, FilterType = {}> extends CrudRepository<ModelType, FilterType> {
     
     protected _items: PersistedModel<ModelType>[] = [];
+    private _initialized: boolean = false;
     
     constructor(protected _storageAdapter: StorageAdapter) {
         super();
+        this.loadFromStorageAdapter().then();
     }
 
     async loadFromStorageAdapter(): Promise<void> {
         return this._storageAdapter.getItems<ModelType>().then((result) => {
             this._items = result;
+            this._initialized = true;
         });
     }
 
@@ -54,13 +57,19 @@ export abstract class InMemoryCrudRepository<ModelType, FilterType = {}> extends
         return Promise.resolve(updatedItem);
     }
 
-    getDetailsFor(id: Id<ModelType>): Promise<PersistedModel<ModelType> | undefined> {
+    async getDetailsFor(id: Id<ModelType>): Promise<PersistedModel<ModelType> | undefined> {
+        if (!this._initialized) {
+            await this.loadFromStorageAdapter();
+        }
         const item = this._items.find(c => c.id.value == id.value);
 
         return Promise.resolve(item);
     }
 
-    getAll(filter: Partial<FilterType>): Promise<PersistedModel<ModelType>[]> {
+    async getAll(filter: Partial<FilterType>): Promise<PersistedModel<ModelType>[]> {
+        if (!this._initialized) {
+            await this.loadFromStorageAdapter();
+        }
         return Promise.resolve(this._items);
     }
 
