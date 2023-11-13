@@ -77,7 +77,7 @@ export class HttpDeleteRepositoryOperation<ModelType extends {}> implements Dele
     }
 
 }
-export abstract class HttpRepository<ModelType extends {}, FilterType = {}> implements CrudRepository<ModelType, FilterType> {
+export class HttpRepository<ModelType extends {}, FilterType = {}> implements CrudRepository<ModelType, FilterType> {
 
     protected _createOperation: HttpCreateRepositoryOperation<ModelType>;
     protected _getAllOperation: HttpGetAllRepositoryOperation<ModelType, FilterType>;

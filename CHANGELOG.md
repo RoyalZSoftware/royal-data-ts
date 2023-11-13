@@ -1,6 +1,8 @@
 # Changelog
 
 ## Unreleased
+### Fixes
+- httpRepository is now no more abstract
 
 ## 2023-11-13 - 0.1.9
 ### Fixes
