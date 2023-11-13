@@ -7,6 +7,7 @@
 - serialization for HttpRepository
 ### Chores
 - make `CrudRepository` an interface, instead of an abstract class
+- introduce tests for `InMemoryCrudRepository`
 
 ## 2023-11-13 - 0.1.10
 ### Fixes
