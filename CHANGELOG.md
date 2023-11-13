@@ -3,6 +3,7 @@
 ## UNRELEASED
 ### Chores
 - README.md add installation instructions
+- downgrade dev typescript version to 4.9.5
 
 ## 2023-11-12 - 0.1.5
 ### Fixes

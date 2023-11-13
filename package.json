@@ -25,6 +25,6 @@
   "author": "Alexander Panov",
   "license": "MIT",
   "devDependencies": {
-    "typescript": "^5.2.2"
+    "typescript": "^4.9.5"
   }
 }
