@@ -1,6 +1,8 @@
 # Changelog
 
 ## Unreleased
+
+## 2023-11-13 - 0.1.8
 ### Fixes
 - Initialization of the `InMemoryRepository` in constructor and in getAll calls
 
