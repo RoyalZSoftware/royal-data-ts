@@ -1,6 +1,8 @@
 # Changelog
 
 ## Unreleased
+
+## 2023-11-14 - 0.2.1
 ### Fixes
 - InMemoryRepository initialization logic
 
