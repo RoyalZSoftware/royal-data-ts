@@ -1,4 +1,4 @@
-import { Observable, of } from "rxjs";
+import { EMPTY, Observable, map, of, tap } from "rxjs";
 import { CrudRepository } from "./crud-repository";
 import { Id } from "./id";
 import { PersistedModel } from "./model-base";
@@ -25,7 +25,19 @@ export class InMemoryCrudRepository<ModelType, FilterType = {}> implements CrudR
     protected _items: PersistedModel<ModelType>[] = [];
     private _initialized: boolean = false;
     
-    constructor(protected _storageAdapter: StorageAdapter) { }
+    constructor(protected _storageAdapter: StorageAdapter) {
+        this.initialize().subscribe();
+    }
+
+    public initialize() {
+        if (this._initialized) return EMPTY;
+        return this._storageAdapter.getItems<ModelType>().pipe(
+            tap((result: PersistedModel<ModelType>[]) => {
+                this._items = result;
+                this._initialized = true;
+            })
+        );
+    }
 
     create(model: ModelType): Observable<PersistedModel<ModelType>> {
         const createdItem = new PersistedModel(new Id<ModelType>(this._items.length.toString()), model);
@@ -55,7 +67,7 @@ export class InMemoryCrudRepository<ModelType, FilterType = {}> implements CrudR
     }
 
     getAll(filter: Partial<FilterType>): Observable<PersistedModel<ModelType>[]> {
-        return of(this._items);
+        return this._initialized ? of(this._items) : this.initialize().pipe(map(() => this._items));
     }
 
     delete(id: Id<ModelType>): Observable<boolean> {
