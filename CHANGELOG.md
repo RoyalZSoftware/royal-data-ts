@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2023-11-14 - 0.2.3
+### Chores
+- Just sample
+
 ## 2023-11-14 - 0.2.2
 ### Features
 - provide httpGetRepositoryOperation via the `HttpCrudRepositoryBuilder`
