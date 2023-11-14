@@ -1,5 +1,5 @@
 import { HttpClient } from "./http-client";
-import { JsonSerializationAdapter, HttpRepositoryRouteDefinitions, HttpRepository } from "./http-repository";
+import { JsonSerializationAdapter, HttpRepositoryRouteDefinitions, HttpRepository, HttpGetAllRepositoryOperation } from "./http-repository";
 
 export class HttpCrudRepositoryBuilder<ModelType extends {}, FilterType = {}> {
     private _serializationAdpater: JsonSerializationAdapter<ModelType, FilterType>;
@@ -27,6 +27,11 @@ export class HttpCrudRepositoryBuilder<ModelType extends {}, FilterType = {}> {
         return this;
     }
 
+    private _httpGetAllOperation?: HttpGetAllRepositoryOperation<ModelType, FilterType>;
+    public withCustomQueryFunction(httpGetAllOperation: HttpGetAllRepositoryOperation<ModelType, FilterType>) {
+        this._httpGetAllOperation = httpGetAllOperation;
+    }
+
     public build(): HttpRepository<ModelType, FilterType> {
         if (this._routeDefinitions === undefined) {
             throw new Error("Either use .withDefaultRouteDefinitions or .withCustomRouteDefinitions");
@@ -34,7 +39,8 @@ export class HttpCrudRepositoryBuilder<ModelType extends {}, FilterType = {}> {
         return new HttpRepository(
             this._httpClient,
             this._routeDefinitions!,
-            this._serializationAdpater
+            this._serializationAdpater,
+            this._httpGetAllOperation
         )
     }
 }

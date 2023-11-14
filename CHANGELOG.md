@@ -1,6 +1,8 @@
 # Changelog
 
 ## Unreleased
+### Features
+- provide httpGetRepositoryOperation via the `HttpCrudRepositoryBuilder`
 
 ## 2023-11-14 - 0.2.1
 ### Fixes

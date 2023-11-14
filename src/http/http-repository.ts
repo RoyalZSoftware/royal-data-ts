@@ -139,21 +139,22 @@ export type HttpRepositoryRouteDefinitions<ModelType> = {
 export class HttpRepository<ModelType extends {}, FilterType = {}> implements CrudRepository<ModelType, FilterType> {
 
     protected _createOperation: HttpCreateRepositoryOperation<ModelType>;
-    protected _getAllOperation: HttpGetAllRepositoryOperation<ModelType, FilterType>;
     protected _getDetailsForOperation: HttpGetDetailsForRepositoryOperation<ModelType>;
     protected _updateOperation: HttpUpdateRepositoryOperation<ModelType>;
     protected _deleteOperation: HttpDeleteRepositoryOperation<ModelType>;
+    protected _getAllOperation: HttpGetAllRepositoryOperation<ModelType, FilterType>;
 
     constructor(
         protected _httpClient: HttpClient,
         protected _routeDefinitions: HttpRepositoryRouteDefinitions<ModelType>,
         protected _serializationAdapter: JsonSerializationAdapter<ModelType, FilterType>,
+        _getAllOperation?: HttpGetAllRepositoryOperation<ModelType, FilterType>,
     ) {
         this._createOperation = new HttpCreateRepositoryOperation<ModelType>(_httpClient,
             _routeDefinitions.create,
             (i) => this._serializationAdapter.serializeModelToString(i),
             (i) => this._serializationAdapter.deserializeStringToPersistedModel(i));
-        this._getAllOperation = new HttpGetAllRepositoryOperation<ModelType, FilterType>(_httpClient, _routeDefinitions.getAll,
+        this._getAllOperation = _getAllOperation ?? new HttpGetAllRepositoryOperation<ModelType, FilterType>(_httpClient, _routeDefinitions.getAll,
             (i) => this._serializationAdapter.serializeFilterToString(i),
             (i) => this._serializationAdapter.deserializeArrayStringToPersistedModelArray(i));
         this._getDetailsForOperation = new HttpGetDetailsForRepositoryOperation<ModelType>(_httpClient,
