@@ -1,6 +1,8 @@
 # Changelog
 
 ## Unreleased
+
+## 2023-11-17 - 0.2.4
 ### Fixes
 - Run code from InMemoryRepository inside observables, not outside
 
