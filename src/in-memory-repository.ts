@@ -33,7 +33,7 @@ export class InMemoryCrudRepository<ModelType, FilterType = {}> implements CrudR
         if (this._initialized) return EMPTY;
         return this._storageAdapter.getItems<ModelType>().pipe(
             tap((result: PersistedModel<ModelType>[]) => {
-                this._items = result;
+                this._items = [...result];
                 this._initialized = true;
             })
         );
@@ -71,7 +71,7 @@ export class InMemoryCrudRepository<ModelType, FilterType = {}> implements CrudR
     }
 
     getAll(filter: Partial<FilterType>): Observable<PersistedModel<ModelType>[]> {
-        return this._initialized ? of(this._items) : this.initialize().pipe(map(() => this._items));
+        return this._initialized ? of([...this._items]) : this.initialize().pipe(map(() => this._items));
     }
 
     delete(id: Id<ModelType>): Observable<boolean> {
