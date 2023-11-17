@@ -16,7 +16,7 @@ describe("EventBasedRepository", () => {
 
         const eventBasedRepository = new EventRepository(items);
 
-        const result = await firstValueFrom(eventBasedRepository.create(
+        await firstValueFrom(eventBasedRepository.create(
             new Post('My third post', 'Alexander Panov')
         ));
 
@@ -54,9 +54,9 @@ describe("EventBasedRepository", () => {
         const eventBasedRepository = new EventRepository(items);
 
         await firstValueFrom(eventBasedRepository.delete(new Id<Post>("0")));
-        const x = await firstValueFrom(eventBasedRepository.create(new Post("My third post", "Alexander Panov")));
+        const createdItem = await firstValueFrom(eventBasedRepository.create(new Post("My third post", "Alexander Panov")));
 
-        await firstValueFrom(eventBasedRepository.update(x.id, new Post("Another post", "Alexander Panov")));
+        await firstValueFrom(eventBasedRepository.update(createdItem.id, new Post("Another post", "Alexander Panov")));
 
         await firstValueFrom(eventBasedRepository.applyTo(persistedRepository));
 
