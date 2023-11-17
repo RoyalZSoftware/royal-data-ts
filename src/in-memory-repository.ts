@@ -1,4 +1,4 @@
-import { EMPTY, Observable, map, of, tap } from "rxjs";
+import { EMPTY, Observable, Subscriber, map, of, tap } from "rxjs";
 import { CrudRepository } from "./crud-repository";
 import { Id } from "./id";
 import { PersistedModel } from "./model-base";
@@ -40,30 +40,34 @@ export class InMemoryCrudRepository<ModelType, FilterType = {}> implements CrudR
     }
 
     create(model: ModelType): Observable<PersistedModel<ModelType>> {
-        const createdItem = new PersistedModel(new Id<ModelType>(this._items.length.toString()), model);
-        this._items.push(createdItem);
-
-        this._storageAdapter.setItems(this._items);
-
-        return of(createdItem);
+        return this.fromFunction$(() => {
+            const createdItem = new PersistedModel(new Id<ModelType>(this._items.length.toString()), model);
+            this._items.push(createdItem);
+    
+            this._storageAdapter.setItems(this._items);
+    
+            return createdItem;
+        })
     }
 
     update(id: Id<ModelType>, payload: ModelType): Observable<PersistedModel<ModelType>> {
-        const itemIndex = this._items.findIndex(c => c.id.value == id.value);
+        return this.fromFunction$(() => {
+            const itemIndex = this._items.findIndex(c => c.id.value == id.value);
         
-        if (itemIndex === -1) throw new Error('Not found.');
-        const updatedItem = {id: this._items[itemIndex].id, model: payload};
-
-        this._items[itemIndex] = updatedItem;
-        this._storageAdapter.setItems(this._items);
-
-        return of(updatedItem);
+            if (itemIndex === -1) throw new Error('Not found.');
+            const updatedItem = {id: this._items[itemIndex].id, model: payload};
+    
+            this._items[itemIndex] = updatedItem;
+            this._storageAdapter.setItems(this._items);
+    
+            return updatedItem;
+        });
     }
 
     getDetailsFor(id: Id<ModelType>): Observable<PersistedModel<ModelType> | undefined> {
-        const item = this._items.find(c => c.id.value == id.value);
-
-        return of(item);
+        return this.fromFunction$(() => {
+            return this._items.find(c => c.id.value == id.value);
+        })
     }
 
     getAll(filter: Partial<FilterType>): Observable<PersistedModel<ModelType>[]> {
@@ -71,9 +75,23 @@ export class InMemoryCrudRepository<ModelType, FilterType = {}> implements CrudR
     }
 
     delete(id: Id<ModelType>): Observable<boolean> {
-        const deletedItems = this._items.splice(this._items.findIndex(c => c.id.value === id.value), 1);
+        return this.fromFunction$(() => {
 
-        this._storageAdapter.setItems(this._items);
-        return of(deletedItems.length === 1);
+            const deletedItems = this._items.splice(this._items.findIndex(c => c.id.value === id.value), 1);
+
+            this._storageAdapter.setItems(this._items);
+            return deletedItems.length === 1;
+        });
+    }
+
+    private fromFunction$<T>(factory: () => T): Observable<T> {
+        return Observable.create((observer: Subscriber<T>) => {
+            try {
+                observer.next(factory());
+                observer.complete();
+            } catch (error) {
+                observer.error(error);
+            }
+        });
     }
 }

@@ -13,7 +13,7 @@ class TestCaseBuilder<ModelType, FilterType = {}> {
 
     public async addItems(count: number) {
         for (let i = 0; i != count; i++) {
-            await this.repository.create(this.create(i));
+            await firstValueFrom(this.repository.create(this.create(i)));
         }
 
         return this;
@@ -23,6 +23,7 @@ class TestCaseBuilder<ModelType, FilterType = {}> {
         const items = await firstValueFrom(
             this.repository.getAll({})
         );
+        console.log(items);
 
         return items[0];
     }
@@ -97,7 +98,7 @@ describe("InMemoryCrudRepository tests", () => {
 
         expect((await firstValueFrom(testCase.repository.getAll({}))).length).toEqual(1);
 
-        testCase.repository.delete(id);
+        await firstValueFrom(testCase.repository.delete(id));
 
         expect((await firstValueFrom(testCase.repository.getAll({}))).length).toEqual(0);
     })
