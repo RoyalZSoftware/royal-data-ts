@@ -1,6 +1,8 @@
 # Changelog
 
 ## Unreleased
+### Features
+- `EventRepository` that holds back the state and can apply it's operations to another crud repo <3
 
 ## 2023-11-17 - 0.2.5
 ### Fixes
