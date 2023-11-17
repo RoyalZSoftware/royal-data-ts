@@ -1,6 +1,8 @@
 # Changelog
 
 ## Unreleased
+
+## 2023-11-17 - 0.2.5
 ### Fixes
 - Remove reference from inMemoryStorage getAll
 
