@@ -1,102 +1,72 @@
-import { Observable, take, tap, zip, switchMap } from "rxjs";
+import { Observable, tap, zip } from "rxjs";
 import { CrudRepository } from "./crud-repository";
 import { Id } from "./id";
 import { InMemoryCrudRepository, InMemoryStorageAdapter } from "./in-memory-repository";
 import { PersistedModel } from "./model-base";
 
-abstract class ItemEvent<T> {
-    abstract handle(repo: CrudRepository<T>): Observable<any>;
-    protected constructor(public readonly itemId: Id<T>) { }
-  }
-  
-  class CreateItemEvent<T> extends ItemEvent<T> {
-    constructor(public readonly myItem: PersistedModel<T>) {
-      super(myItem.id);
-    }
-    override handle(repo: CrudRepository<T>): Observable<any> {
-      return repo.create(this.myItem.model);
-    }
-  }
-  
-  class DeleteItemEvent<T> extends ItemEvent<T> {
-    constructor(item: Id<T>) {
-      super(item);
-    }
-  
-    handle(repo: CrudRepository<T>): Observable<any> {
-      console.log("Deleting item " + this.itemId);
-      return repo.delete(this.itemId);
-    }
-  }
-  
-export class NotifyAboutChangesOnCrudRepository<ModelType, FilterType = {}> implements CrudRepository<any> {
-  
-    public events: ItemEvent<ModelType>[] = [];
-  
-    private _inMemory: InMemoryCrudRepository<any> = new InMemoryCrudRepository(new InMemoryStorageAdapter());
-  
-    constructor(private _commitToCrudRepo: CrudRepository<ModelType, FilterType>) {
+interface ItemEvent<T> {
+  handle(repo: CrudRepository<T>): Observable<any>;
+}
 
-    }
-  
-    public initialize(): Observable<any> {
-      return this._commitToCrudRepo.getAll({}).pipe(take(1), tap((items) => {
-        const inMemoryStorage = new InMemoryStorageAdapter();
-        inMemoryStorage.items = [...items];
-        this._inMemory = new InMemoryCrudRepository<ModelType>(inMemoryStorage);
-      }))
-    }
-  
-    create(model: ModelType): Observable<PersistedModel<any>> {
-      return this._inMemory.create(model).pipe(tap((persistedModel) => {
-        this.events.push(
-          new CreateItemEvent(persistedModel)
-        );
-      }))
-    }
-  
-    delete(id: Id<ModelType>): Observable<boolean> {
-      return this._inMemory.delete(id).pipe(
-        tap(() => {
-  
-          const foundEvents = this._getExistingEventsFor(id);
-          const indexOfCreationEvent = foundEvents.findIndex(c => c instanceof CreateItemEvent)
-  
-          if (indexOfCreationEvent !== -1) {
-            this.events = this.events.splice(indexOfCreationEvent, 1);
-            // The item was created previously, so we do not need to notify somebody about it
-            return;
-          }
-  
-          this.events.push(
-            new DeleteItemEvent(id),
-          )
-        })
-      );
-    }
-  
-    private _getExistingEventsFor(id: Id<ModelType>) {
-      return this.events.filter(c => c.itemId.value == id.value);
-    }
-  
-    getAll(filter: Partial<{}>): Observable<PersistedModel<any>[]> {
-      return this._inMemory.getAll(filter);
-    }
-  
-    getDetailsFor(id: Id<any>): Observable<PersistedModel<any> | undefined> {
-      return this._inMemory.getDetailsFor(id);
-    }
-  
-    update(id: Id<any>, updatePayload: any): Observable<PersistedModel<any>> {
-      return this._inMemory.update(id, updatePayload);
-    }
-  
-    public executeAll(): Observable<any> {
-      return zip(...this.events.map(c => c.handle(this._commitToCrudRepo))).pipe(tap(() => {
-          this.events = [];
-        }),
-        switchMap(() => this.initialize())
-      );
-    }
+class CreateItemEvent<T> implements ItemEvent<T> {
+  constructor(public readonly _id: Id<T>, private readonly _item: T) {}
+
+  handle(repo: CrudRepository<T>): Observable<any> {
+    return repo.create(this._item);
   }
+}
+
+class DeleteItemEvent<T> implements ItemEvent<T> {
+  constructor(private readonly _id: Id<T>) {}
+
+  handle(repo: CrudRepository<T>): Observable<any> {
+    return repo.delete(this._id);
+  }
+}
+
+class UpdateItemEvent<T> implements ItemEvent<T> {
+  constructor(private readonly _id: Id<T>, private readonly _payload: T) { }
+
+  handle(repo: CrudRepository<T, {}>): Observable<any> {
+    return repo.update(this._id, this._payload);
+  }
+}
+
+export class EventRepository<T, FilterType = {}> extends InMemoryCrudRepository<T, FilterType> {
   
+  public events: ItemEvent<T>[] = [];
+
+  constructor(sourceItems: PersistedModel<T>[] = []) {
+    super(new InMemoryStorageAdapter(sourceItems));
+  }
+
+  create(model: T): Observable<PersistedModel<T>> {
+    return super.create(model).pipe(
+      tap((storedModel: PersistedModel<T>) => {
+        this.events.push(new CreateItemEvent(storedModel.id, storedModel.model))
+      })
+    );
+  }
+
+  delete(id: Id<T>): Observable<boolean> {
+    return super.delete(id).pipe(
+      tap(() => {
+        this.events.push(new DeleteItemEvent(id))
+      })
+    );
+  }
+
+  update(id: Id<T>, payload: T): Observable<PersistedModel<T>> {
+    return super.update(id, payload).pipe(
+      tap(() => {
+        this.events.push(new UpdateItemEvent(id, payload))
+      })
+    )
+  }
+
+  public applyTo(crudRepository: CrudRepository<T, FilterType>) {
+    return zip(...this.events.map(c => c.handle(crudRepository))).pipe(tap(() => {
+      this.events = [];
+    }));
+  }
+}

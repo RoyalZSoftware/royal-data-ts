@@ -23,7 +23,6 @@ class TestCaseBuilder<ModelType, FilterType = {}> {
         const items = await firstValueFrom(
             this.repository.getAll({})
         );
-        console.log(items);
 
         return items[0];
     }

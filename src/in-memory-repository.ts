@@ -9,7 +9,8 @@ export interface StorageAdapter {
 }
 
 export class InMemoryStorageAdapter implements StorageAdapter {
-    public items: any[] = [];
+    constructor(public items: any[] = []) {
+    }
 
     setItems<T>(value: T[]): Observable<boolean> {
         this.items = value;
@@ -41,7 +42,8 @@ export class InMemoryCrudRepository<ModelType, FilterType = {}> implements CrudR
 
     create(model: ModelType): Observable<PersistedModel<ModelType>> {
         return this.fromFunction$(() => {
-            const createdItem = new PersistedModel(new Id<ModelType>(this._items.length.toString()), model);
+            const id: number = this._items.length == 0 ? 0 : Number(this._items[this._items.length - 1].id.value) + 1;
+            const createdItem = new PersistedModel(new Id<ModelType>(id.toString()), model);
             this._items.push(createdItem);
     
             this._storageAdapter.setItems(this._items);
