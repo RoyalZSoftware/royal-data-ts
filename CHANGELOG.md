@@ -1,6 +1,8 @@
 # Changelog
 
 ## Unreleased
+
+## 2023-11-18 - 0.4.0
 ### Features
 - `Id<T>` has now an `isEqualTo(id: Id<T>)` method
 ### Fixes
