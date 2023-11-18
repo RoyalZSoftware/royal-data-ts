@@ -44,10 +44,9 @@ describe("InMemoryCrudRepository tests", () => {
         const myFirstPost = new BlogPost(new Id<Author>("0"), "How to write tests 101");
         expect(storageAdapter.items.length).toEqual(0);
 
-        const {id} = await firstValueFrom(repo.create(myFirstPost));
+        await firstValueFrom(repo.create(myFirstPost));
 
         expect(storageAdapter.items.length).toEqual(1);
-        expect(id).toEqual(new Id<BlogPost>("0"));
     });
 
     it ("Retrieving stored models works", async () => {

@@ -76,6 +76,7 @@ test(userRepository);
 
 ## 🌟 Highlights
 - RxJs first
+- `EventRepository` that holds the changes inMemory until you want to persist it by applying the events to a persisted CRUD Repository
 - Zero dependencies besides Typescript
 - Small modules that can be extended easily
 - Shipped with `LocalStorage` adapter, for UI development without external depedencies

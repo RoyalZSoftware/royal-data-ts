@@ -63,5 +63,25 @@ describe("EventBasedRepository", () => {
         const resultAfter = await firstValueFrom(persistedRepository.getAll({}));
         expect(resultAfter[1].model.name).toEqual("Another post");
         expect(resultAfter.length).toEqual(2);
-    })
+    });
+    it("Creating an item and deleting it, clears the events queue", async () => {
+        const persistedRepository = new InMemoryCrudRepository<Post>(new InMemoryStorageAdapter([
+            new PersistedModel(new Id<Post>("0"), new Post("My first post", "Alexander Panov")),
+            new PersistedModel(new Id<Post>("1"), new Post("My second post", "Alexander Panov")),
+        ]));
+
+        const items = await firstValueFrom(persistedRepository.getAll({}));
+
+        const eventBasedRepository = new EventRepository(items);
+
+        const {id: createdPostId} = (await firstValueFrom(eventBasedRepository.create(new Post("My third post", "Alexander Panov"))));
+        expect(eventBasedRepository.events.length).toEqual(1);
+
+        await firstValueFrom(eventBasedRepository.delete(createdPostId));
+
+        expect(eventBasedRepository.events).toEqual([]);
+
+        const resultAfter = await firstValueFrom(persistedRepository.getAll({}));
+        expect(resultAfter.length).toEqual(2);
+    });
 })

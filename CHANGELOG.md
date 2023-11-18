@@ -1,6 +1,13 @@
 # Changelog
 
 ## Unreleased
+### Features
+- `Id<T>` has now an `isEqualTo(id: Id<T>)` method
+### Fixes
+- `EventRepository` works now correctly when creating a new item in memory and removing it without first persisting it.
+- `InMemoryRepository` creates the next id now with a prefix of 100k.
+### Chores
+- Give the EventRepository a stage in the readme
 
 ## 2023-11-18 - 0.3.0
 ### Features

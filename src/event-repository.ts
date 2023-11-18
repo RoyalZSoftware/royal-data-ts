@@ -6,10 +6,15 @@ import { PersistedModel } from "./model-base";
 
 interface ItemEvent<T> {
   handle(repo: CrudRepository<T>): Observable<any>;
+  affectedId(): Id<T>;
 }
 
 class CreateItemEvent<T> implements ItemEvent<T> {
   constructor(public readonly _id: Id<T>, private readonly _item: T) {}
+
+  public affectedId(): Id<T> {
+    return this._id;
+  };
 
   handle(repo: CrudRepository<T>): Observable<any> {
     return repo.create(this._item);
@@ -19,6 +24,10 @@ class CreateItemEvent<T> implements ItemEvent<T> {
 class DeleteItemEvent<T> implements ItemEvent<T> {
   constructor(private readonly _id: Id<T>) {}
 
+  public affectedId(): Id<T> {
+    return this._id;
+  }
+
   handle(repo: CrudRepository<T>): Observable<any> {
     return repo.delete(this._id);
   }
@@ -26,6 +35,10 @@ class DeleteItemEvent<T> implements ItemEvent<T> {
 
 class UpdateItemEvent<T> implements ItemEvent<T> {
   constructor(private readonly _id: Id<T>, private readonly _payload: T) { }
+
+  affectedId(): Id<T> {
+    return this._id;
+  }
 
   handle(repo: CrudRepository<T, {}>): Observable<any> {
     return repo.update(this._id, this._payload);
@@ -51,9 +64,20 @@ export class EventRepository<T, FilterType = {}> extends InMemoryCrudRepository<
   delete(id: Id<T>): Observable<boolean> {
     return super.delete(id).pipe(
       tap(() => {
+        const affectedEvents = this._getAffectedEvents(id);
+        
+        if (affectedEvents.length > 0) {
+          this.events = this.events.filter(c => !c.affectedId().isEqualTo(id));
+          return;
+        }
+
         this.events.push(new DeleteItemEvent(id))
       })
     );
+  }
+
+  private _getAffectedEvents(id: Id<T>): ItemEvent<T>[] {
+    return this.events.filter(c => c.affectedId().isEqualTo(id));
   }
 
   update(id: Id<T>, payload: T): Observable<PersistedModel<T>> {

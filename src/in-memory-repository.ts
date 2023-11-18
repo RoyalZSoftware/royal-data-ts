@@ -40,10 +40,13 @@ export class InMemoryCrudRepository<ModelType, FilterType = {}> implements CrudR
         );
     }
 
+    protected _nextIdFactory(): Id<ModelType> {
+        return new Id<ModelType>(100000 + this._items.length.toString());
+    }
+
     create(model: ModelType): Observable<PersistedModel<ModelType>> {
         return this.fromFunction$(() => {
-            const id: number = this._items.length == 0 ? 0 : Number(this._items[this._items.length - 1].id.value) + 1;
-            const createdItem = new PersistedModel(new Id<ModelType>(id.toString()), model);
+            const createdItem = new PersistedModel(new Id<ModelType>(this._nextIdFactory().toString()), model);
             this._items.push(createdItem);
     
             this._storageAdapter.setItems(this._items);
