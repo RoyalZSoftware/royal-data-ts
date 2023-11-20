@@ -1,6 +1,6 @@
 {
   "name": "@royalzsoftware/royal-data-ts",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "🌟 Define your models and this package handle will handle the persistence",
   "main": "index.js",
   "types": "dist/index.d.ts",

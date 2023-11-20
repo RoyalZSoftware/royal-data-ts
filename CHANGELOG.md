@@ -1,6 +1,8 @@
 # Changelog
 
 ## Unreleased
+
+## 2023-11-20 - 0.4.1
 ### Fixes
 - Create model for inMemory now has the correct implementation
 
