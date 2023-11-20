@@ -46,7 +46,7 @@ export class InMemoryCrudRepository<ModelType, FilterType = {}> implements CrudR
 
     create(model: ModelType): Observable<PersistedModel<ModelType>> {
         return this.fromFunction$(() => {
-            const createdItem = new PersistedModel(new Id<ModelType>(this._nextIdFactory().toString()), model);
+            const createdItem = new PersistedModel(this._nextIdFactory(), model);
             this._items.push(createdItem);
     
             this._storageAdapter.setItems(this._items);
