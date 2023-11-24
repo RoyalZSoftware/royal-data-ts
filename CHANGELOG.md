@@ -1,6 +1,8 @@
 # Changelog
 
 ## Unreleased
+### Breaking changes
+- http repository now takes an serializer object
 
 ## 2023-11-20 - 0.4.1
 ### Fixes

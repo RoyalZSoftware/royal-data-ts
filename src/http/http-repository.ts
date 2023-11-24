@@ -4,7 +4,7 @@ import { PersistedModel } from "../model-base";
 import { CreateRepositoryOperation, DeleteRepositoryOperation, GetAllRepositoryOperation, GetDetailsRepositoryOperation, UpdateRepositoryOperation } from "../repository-operations";
 import { HttpClient } from "./http-client";
 import { map, Observable } from "rxjs";
-import { Serializer } from "../serialization/deserializer";
+import { Serializer } from "../serialization/serializer";
 
 export type RouteFnWithModelId<ModelType> = (id: Id<ModelType>) => string;
 

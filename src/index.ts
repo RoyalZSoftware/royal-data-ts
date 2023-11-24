@@ -7,3 +7,4 @@ export * from './in-memory-repository';
 export * from './local-storage';
 export * from './crud-repository-builder';
 export * from './event-repository';
+export * from './serialization/serializer';
