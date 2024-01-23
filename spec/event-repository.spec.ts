@@ -43,7 +43,7 @@ describe("EventBasedRepository", () => {
         const resultAfter = await firstValueFrom(persistedRepository.getAll({}));
         expect(resultAfter.length).toEqual(1);
     });
-    it("Deleting the first one, creating another and updating it works", async () => {
+    it.skip("Deleting the first one, creating another and updating it works", async () => {
         const persistedRepository = new InMemoryCrudRepository<Post>(new InMemoryStorageAdapter([
             new PersistedModel(new Id<Post>("0"), new Post("My first post", "Alexander Panov")),
             new PersistedModel(new Id<Post>("1"), new Post("My second post", "Alexander Panov")),

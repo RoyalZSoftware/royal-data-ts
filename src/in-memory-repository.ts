@@ -41,7 +41,7 @@ export class InMemoryCrudRepository<ModelType, FilterType = {}> implements CrudR
     }
 
     protected _nextIdFactory(): Id<ModelType> {
-        return new Id<ModelType>(100000 + this._items.length.toString());
+        return new Id<ModelType>(Math.random().toString(16).slice(2));
     }
 
     create(model: ModelType): Observable<PersistedModel<ModelType>> {
