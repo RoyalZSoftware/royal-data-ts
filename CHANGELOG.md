@@ -1,6 +1,8 @@
 # Changelog
 
 ## Unreleased
+
+## 2024-01-23 - 0.4.3
 ### Fixes
 - newIdFactory
 
