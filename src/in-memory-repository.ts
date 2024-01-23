@@ -82,10 +82,10 @@ export class InMemoryCrudRepository<ModelType, FilterType = {}> implements CrudR
     delete(id: Id<ModelType>): Observable<boolean> {
         return this.fromFunction$(() => {
 
-            const deletedItems = this._items.splice(this._items.findIndex(c => c.id.value === id.value), 1);
+            this._items = this._items.filter(c => c.id.value != id.value);
 
             this._storageAdapter.setItems(this._items);
-            return deletedItems.length === 1;
+            return true;
         });
     }
 
