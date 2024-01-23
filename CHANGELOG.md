@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2024-01-23 - 0.4.2
+### Fixes
+- delete item in inmemoryrepository
+
 ## 2023-11-20 - 0.4.1
 ### Fixes
 - Create model for inMemory now has the correct implementation
